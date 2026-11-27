@@ -1,2 +1,77 @@
 import Link from "next/link";
-export default function Home(){return <><section className="hero"><div className="container hero-grid"><div><span className="eyebrow">ESTUDIO DIGITAL INDEPENDIENTE</span><h1>Tu próximo paso<br/>en <em>digital</em> empieza<br/>con una buena idea.</h1><p className="lead">Diseñamos y desarrollamos sitios web que trabajan para tu negocio. Los hacemos visibles, útiles y preparados para crecer.</p><div className="actions"><Link className="btn" href="/contacto">Contanos tu proyecto ↗</Link><Link className="under" href="/servicios">Explorar servicios →</Link></div><p className="micro">ESTRATEGIA · DISEÑO · TECNOLOGÍA</p></div><div className="orb" aria-label="Composición abstracta de líneas y conexiones"><div className="ring r1"/><div className="ring r2"/><div className="ring r3"/><b>LS</b><small>IDEAS EN<br/>MOVIMIENTO</small></div></div><div className="container hero-foot"><span>01 / 04</span><span>BUENOS AIRES · ARGENTINA</span></div></section><section className="section"><div className="container"><span className="eyebrow">QUÉ HACEMOS</span><h2>Una presencia digital<br/>con <em>dirección.</em></h2><p className="section-lead">No se trata solo de estar en internet. Se trata de construir una experiencia que tenga sentido para las personas y para tu negocio.</p><div className="cards"><article><b>01</b><span className="symbol">↗</span><h3>Diseño y desarrollo web</h3><p>Sitios rápidos, claros y hechos a medida. Desde una landing hasta una plataforma con funcionalidades propias.</p><Link href="/servicios#web">Conocer el servicio →</Link></article><article><b>02</b><span className="symbol">⌕</span><h3>Posicionamiento SEO</h3><p>Una estrategia técnica y de contenidos para que las personas puedan encontrar lo que ofrecés.</p><Link href="/servicios#seo">Conocer el servicio →</Link></article></div></div></section><section className="dark section"><div className="container split"><div><span className="eyebrow">CÓMO TRABAJAMOS</span><h2>De la primera charla<br/>a una solución <em>real.</em></h2></div><ol><li><b>01</b> Entender — escuchamos el contexto y tus objetivos.</li><li><b>02</b> Planificar — definimos alcance y prioridades.</li><li><b>03</b> Construir — diseñamos, desarrollamos y revisamos.</li><li><b>04</b> Mejorar — acompañamos la evolución del proyecto.</li></ol></div></section><section className="section"><div className="container"><span className="eyebrow">PROYECTOS PROPIOS</span><h2>También construimos<br/>lo que <em>imaginamos.</em></h2><p className="section-lead">Proyectos propios que funcionan como laboratorio de diseño, desarrollo y aprendizaje.</p><div className="cards projects"><article><div className="project-art metric">Métrica<span>Sur</span></div><small>PROYECTO PROPIO</small><h3>MétricaSur</h3><p>Software de gestión y analítica empresarial.</p></article><article><div className="project-art radio">R<span>E</span></div><small>PROYECTO PROPIO</small><h3>RadioEterna</h3><p>Un proyecto digital propio en desarrollo.</p></article></div></div></section><section className="cta"><div className="container split"><h2>¿Le damos forma<br/>a tu próxima idea?</h2><Link className="btn light" href="/contacto">Empezar una conversación ↗</Link></div></section></>}
+
+const services = [
+  { number: "01", tag: "PRESENCIA DIGITAL", title: "Diseño y desarrollo web", copy: "Sitios web pensados para comunicar mejor, generar confianza y convertir visitas en oportunidades.", href: "/servicios#web", action: "Explorar desarrollo web", mark: "↗" },
+  { number: "02", tag: "CRECIMIENTO ORGÁNICO", title: "Posicionamiento SEO", copy: "Una base técnica sólida y contenido estratégico para que tu negocio pueda ser encontrado.", href: "/servicios#seo", action: "Explorar SEO", mark: "⌕" },
+];
+
+const steps = [
+  ["01", "Escuchamos", "Entendemos tu negocio, tus objetivos y a las personas a las que querés llegar."],
+  ["02", "Damos dirección", "Ordenamos las ideas y definimos un plan de trabajo con prioridades claras."],
+  ["03", "Hacemos realidad", "Diseñamos, desarrollamos y probamos cada parte del proyecto."],
+  ["04", "Seguimos creciendo", "Medimos, aprendemos y mejoramos lo que construimos."],
+];
+
+export default function Home() {
+  return (
+    <>
+      <section className="home-hero">
+        <div className="container home-hero-grid">
+          <div className="home-hero-copy">
+            <span className="eyebrow"><span className="eyebrow-dot" /> ESTUDIO DIGITAL INDEPENDIENTE · ARGENTINA</span>
+            <h1>Ideas claras.<br />Experiencias que<br /><em>mueven negocios.</em></h1>
+            <p className="home-lead">Diseñamos y desarrollamos experiencias digitales para marcas que quieren dar su próximo paso con intención.</p>
+            <div className="home-actions">
+              <Link className="btn home-primary" href="/contacto">Hablemos de tu proyecto <span aria-hidden="true">↗</span></Link>
+              <Link className="home-text-link" href="/servicios">Conocé qué hacemos <span aria-hidden="true">→</span></Link>
+            </div>
+            <div className="home-note"><span className="home-note-line" /> ESTRATEGIA <i>·</i> DISEÑO <i>·</i> DESARROLLO <i>·</i> SEO</div>
+          </div>
+          <div className="hero-visual" aria-label="Composición gráfica abstracta de Lazo Sur">
+            <div className="hero-visual-top"><span>LS / EST. DIGITAL</span><span>01 — 04</span></div>
+            <div className="hero-sun" />
+            <div className="hero-loop loop-one" />
+            <div className="hero-loop loop-two" />
+            <div className="hero-loop loop-three" />
+            <div className="hero-cross">+</div>
+            <div className="hero-visual-bottom"><strong>LO QUE IMAGINÁS,<br />PUEDE TOMAR FORMA.</strong><span>BUENOS AIRES<br />ARGENTINA</span></div>
+          </div>
+        </div>
+        <div className="container hero-bottom"><span>01 / UNA IDEA, MUCHAS POSIBILIDADES</span><span>DESLIZÁ PARA DESCUBRIR <b>↓</b></span></div>
+      </section>
+
+      <section className="home-intro section">
+        <div className="container intro-grid">
+          <div><span className="eyebrow">01 — NUESTRA MIRADA</span><h2>Lo digital no es el destino.<br /><em>Es lo que te lleva.</em></h2></div>
+          <div className="intro-copy"><p>Una buena presencia digital hace mucho más que verse bien. Explica lo que hacés, transmite confianza y ayuda a que las personas den el siguiente paso.</p><p>En Lazo Sur combinamos estrategia, diseño y tecnología para construir herramientas digitales con propósito.</p><Link className="inline-link" href="/contacto">Conversemos sobre tu idea <span aria-hidden="true">↗</span></Link></div>
+        </div>
+      </section>
+
+      <section className="home-services section">
+        <div className="container">
+          <div className="section-heading"><div><span className="eyebrow">02 — QUÉ HACEMOS</span><h2>Herramientas para<br /><em>avanzar.</em></h2></div><p>Soluciones digitales a medida, con objetivos concretos y decisiones pensadas para tu negocio.</p></div>
+          <div className="service-grid">{services.map((service) => <article className="service-card" key={service.number}><div className="service-card-top"><span>{service.number} / {service.tag}</span><b aria-hidden="true">{service.mark}</b></div><h3>{service.title}</h3><p>{service.copy}</p><Link href={service.href}>{service.action} <span aria-hidden="true">↗</span></Link></article>)}</div>
+        </div>
+      </section>
+
+      <section className="home-process section">
+        <div className="container process-layout">
+          <div className="process-heading"><span className="eyebrow">03 — EL PROCESO</span><h2>De la charla<br />a algo <em>real.</em></h2><p>Trabajamos de forma cercana y ordenada. Cada etapa tiene un porqué y cada decisión, una intención.</p><Link className="process-link" href="/contacto">Empezar una conversación ↗</Link></div>
+          <div className="process-list">{steps.map(([number, title, copy]) => <article key={number}><span>{number}</span><div><h3>{title}</h3><p>{copy}</p></div><b aria-hidden="true">↗</b></article>)}</div>
+        </div>
+      </section>
+
+      <section className="home-work section">
+        <div className="container">
+          <div className="section-heading work-heading"><div><span className="eyebrow">04 — EN NUESTRO UNIVERSO</span><h2>Ideas que también<br /><em>ponemos en práctica.</em></h2></div><p>Además de trabajar con marcas, desarrollamos proyectos propios que nos permiten explorar, aprender y crear.</p></div>
+          <div className="work-grid">
+            <article className="work-card work-metric"><div className="work-art metric-art"><span className="metric-symbol">M<span>↗</span></span><span className="art-caption">DATOS EN MOVIMIENTO / 01</span><div className="metric-bars"><i/><i/><i/><i/><i/><i/><i/></div></div><div className="work-meta"><span>PROYECTO PROPIO · SOFTWARE</span><span>01 / 02</span></div><h3>MétricaSur</h3><p>Software de gestión y analítica empresarial.</p></article>
+            <article className="work-card work-radio"><div className="work-art radio-art"><span className="radio-orbit orbit-a"/><span className="radio-orbit orbit-b"/><strong>R<span>E</span></strong><span className="art-caption">UNA SEÑAL, MUCHAS HISTORIAS / 02</span></div><div className="work-meta"><span>PROYECTO PROPIO · DIGITAL</span><span>02 / 02</span></div><h3>RadioEterna</h3><p>Un proyecto digital propio en desarrollo.</p></article>
+          </div>
+        </div>
+      </section>
+
+      <section className="home-cta"><div className="container cta-inner"><span className="eyebrow">¿TENÉS UNA IDEA EN MENTE?</span><h2>Hagamos que<br /><em>pase algo bueno.</em></h2><div className="cta-bottom"><p>Contanos qué estás imaginando.<br />El primer paso es una conversación.</p><Link className="btn cta-button" href="/contacto">Hablemos <span aria-hidden="true">↗</span></Link></div><span className="cta-stamp" aria-hidden="true">LS</span></div></section>
+    </>
+  );
+}
