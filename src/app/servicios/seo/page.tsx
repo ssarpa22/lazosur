@@ -1,5 +1,6 @@
-import { createPageMetadata } from "@/lib/site";
+import { createPageMetadata, site } from "@/lib/site";
 import Link from "next/link";
+import JsonLd from "@/components/json-ld";
 
 export const metadata = createPageMetadata({ title: "Posicionamiento SEO", description: "Estrategia SEO, auditorías, optimización técnica y de contenidos para mejorar la visibilidad orgánica de tu sitio web.", path: "/servicios/seo" });
 
@@ -20,6 +21,15 @@ const process = [
 export default function SeoService() {
   return (
     <>
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "Service",
+        name: "Posicionamiento SEO",
+        serviceType: "Posicionamiento SEO",
+        description: "Estrategia SEO, auditorías, optimización técnica y de contenidos para mejorar la visibilidad orgánica de tu sitio web.",
+        url: new URL("/servicios/seo", site.url).toString(),
+        provider: { "@id": `${site.url}/#organization` },
+      }} />
       <section className="service-detail-hero service-detail-hero--seo">
         <div className="container">
           <Link className="service-back-link" href="/servicios">← Todos los servicios</Link>

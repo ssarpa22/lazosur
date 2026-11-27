@@ -1,5 +1,6 @@
-import { createPageMetadata } from "@/lib/site";
+import { createPageMetadata, site } from "@/lib/site";
 import Link from "next/link";
+import JsonLd from "@/components/json-ld";
 
 export const metadata = createPageMetadata({ title: "Diseño y desarrollo web", description: "Sitios web institucionales, comerciales y landing pages diseñados para comunicar con claridad y funcionar en cualquier dispositivo.", path: "/servicios/diseno-web" });
 
@@ -20,6 +21,15 @@ const process = [
 export default function WebDesignService() {
   return (
     <>
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "Service",
+        name: "Diseño y desarrollo web",
+        serviceType: "Diseño y desarrollo web",
+        description: "Sitios web institucionales, comerciales y landing pages diseñados para comunicar con claridad y funcionar en cualquier dispositivo.",
+        url: new URL("/servicios/diseno-web", site.url).toString(),
+        provider: { "@id": `${site.url}/#organization` },
+      }} />
       <section className="service-detail-hero">
         <div className="container">
           <Link className="service-back-link" href="/servicios">← Todos los servicios</Link>
