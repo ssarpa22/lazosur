@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(12);
+select plan(14);
 
 select ok(
   (select relrowsecurity from pg_class where oid = 'public.leads'::regclass),
@@ -59,6 +59,21 @@ select is(
                     'services_set_updated_at', 'site_settings_set_updated_at')),
   4,
   'all mutable business tables have updated_at triggers'
+);
+
+select lives_ok(
+  $insert into public.leads
+    (name, email, service, message, consent_at)
+    values ('Test Contact', 'test@example.com', 'web',
+            'This is a valid test contact message.', now())$,
+  'lead insert successfully writes an audit entry'
+);
+
+select is(
+  (select count(*)::integer from public.admin_audit_log
+   where entity = 'leads' and action = 'insert'),
+  1,
+  'lead mutation is recorded in the audit log'
 );
 
 select * from finish();
