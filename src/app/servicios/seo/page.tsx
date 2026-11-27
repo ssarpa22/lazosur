@@ -21,6 +21,15 @@ const process = [
 export default function SeoService() {
   return (
     <>
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "Service",
+        name: "Posicionamiento SEO",
+        serviceType: "Posicionamiento SEO",
+        description: "Estrategia SEO, auditorías, optimización técnica y de contenidos para mejorar la visibilidad orgánica de tu sitio web.",
+        url: new URL("/servicios/seo", process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").toString(),
+        provider: { "@id": `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/#organization` },
+      }} />
       <section className="service-detail-hero service-detail-hero--seo">
         <div className="container">
           <Link className="service-back-link" href="/servicios">← Todos los servicios</Link>
