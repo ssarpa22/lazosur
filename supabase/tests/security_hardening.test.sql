@@ -62,10 +62,10 @@ select is(
 );
 
 select lives_ok(
-  $insert into public.leads
+  $insert$ insert into public.leads
     (name, email, service, message, consent_at)
     values ('Test Contact', 'test@example.com', 'web',
-            'This is a valid test contact message.', now())$,
+            'This is a valid test contact message.', now()) $insert$,
   'lead insert successfully writes an audit entry'
 );
 
