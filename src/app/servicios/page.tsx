@@ -1,11 +1,7 @@
-import type { Metadata } from "next";
+import { createPageMetadata } from "@/lib/site";
 import Link from "next/link";
 
-export const metadata: Metadata = {
-  title: "Servicios",
-  description: "Diseño y desarrollo web y posicionamiento SEO para negocios y profesionales.",
-  alternates: { canonical: "/servicios" },
-};
+export const metadata = createPageMetadata({ title: "Servicios", description: "Diseño y desarrollo web y posicionamiento SEO para negocios y profesionales.", path: "/servicios" });
 
 const services = [
   {
