@@ -1,5 +1,4 @@
 import {NextResponse} from "next/server";
-import {z} from "zod";
 import {getAdminApiClient} from "@/lib/admin-api";
 
 const statuses = ["new", "contacted", "negotiation", "won", "lost", "archived"] as const;
@@ -26,7 +25,7 @@ export async function GET(request: Request) {
     const pageSize = 20;
     let query = db
       .from("leads")
-      .select("id,name,company,email,phone,service,budget,message,status,source,consent_at,internal_notes,created_at,updated_at", {count: "exact"})
+      .select("id,name,company,email,status,created_at", {count: "exact"})
       .order("created_at", {ascending: false})
       .range((page - 1) * pageSize, page * pageSize - 1);
 
