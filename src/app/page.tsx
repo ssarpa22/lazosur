@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 const services = [
-  { number: "01", tag: "PRESENCIA DIGITAL", title: "Diseño y desarrollo web", copy: "Sitios web pensados para comunicar mejor, generar confianza y convertir visitas en oportunidades.", href: "/servicios#web", action: "Explorar desarrollo web", mark: "↗" },
-  { number: "02", tag: "CRECIMIENTO ORGÁNICO", title: "Posicionamiento SEO", copy: "Una base técnica sólida y contenido estratégico para que tu negocio pueda ser encontrado.", href: "/servicios#seo", action: "Explorar SEO", mark: "⌕" },
+  { number: "01", tag: "PRESENCIA DIGITAL", title: "Diseño y desarrollo web", copy: "Sitios web pensados para comunicar mejor, generar confianza y convertir visitas en oportunidades.", href: "/servicios/diseno-web", action: "Explorar desarrollo web", mark: "↗" },
+  { number: "02", tag: "CRECIMIENTO ORGÁNICO", title: "Posicionamiento SEO", copy: "Una base técnica sólida y contenido estratégico para que tu negocio pueda ser encontrado.", href: "/servicios/seo", action: "Explorar SEO", mark: "⌕" },
 ];
 
 const steps = [
