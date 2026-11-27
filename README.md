@@ -9,7 +9,7 @@ Next.js App Router, React, TypeScript, Supabase Auth/PostgreSQL/RLS, Zod, Vitest
 Requiere Node.js 22+. Ejecutar `npm ci`, copiar `.env.example` a `.env.local` y correr `npm run dev`.
 
 ## Variables
-- `NEXT_PUBLIC_SITE_URL`: URL canónica del sitio.
+- `NEXT_PUBLIC_SITE_URL`: URL canónica absoluta del sitio (por ejemplo, `https://tudominio.com`), sin barra final. Configurarla en producción antes de publicar; si no se define, los metadatos y el sitemap usan `http://localhost:3000`.
 - `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_ANON_KEY`: credenciales públicas del proyecto Supabase.
 - `ADMIN_EMAILS`: allowlist de administradores, exclusivamente del lado servidor.
 - `SUPABASE_SERVICE_ROLE_KEY`: clave privilegiada de Supabase, exclusivamente del lado servidor y usada solo por el endpoint de contacto.
