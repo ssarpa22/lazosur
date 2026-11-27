@@ -9,6 +9,7 @@ const publicPages = [
   { path: "/portfolio", priority: 0.7, changeFrequency: "monthly" as const },
   { path: "/nosotros", priority: 0.5, changeFrequency: "yearly" as const },
   { path: "/contacto", priority: 0.7, changeFrequency: "yearly" as const },
+  { path: "/privacidad", priority: 0.3, changeFrequency: "yearly" as const },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
