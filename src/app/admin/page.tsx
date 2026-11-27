@@ -1,6 +1,7 @@
 import {requireAdmin} from "@/lib/auth";
 import {createClient} from "@/lib/supabase/server";
 import {AdminLeads} from "@/components/admin-leads";
+import {AdminContent} from "@/components/admin-content";
 
 export const metadata = {
   title: "Panel administrativo",
@@ -30,6 +31,11 @@ export default async function Admin() {
         <h2>Consultas comerciales</h2>
         <p>Revisá los mensajes recibidos, buscá oportunidades y mantené actualizado su estado.</p>
         <AdminLeads />
+      </div>
+      <div className="admin-panel">
+        <h2>Contenido del sitio</h2>
+        <p>Administrá los proyectos del portfolio y los servicios que aparecen en el sitio público.</p>
+        <AdminContent />
       </div>
     </section>
   );
