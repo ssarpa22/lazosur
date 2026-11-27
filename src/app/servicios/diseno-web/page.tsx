@@ -1,4 +1,4 @@
-import { createPageMetadata } from "@/lib/site";
+import { createPageMetadata, site } from "@/lib/site";
 import Link from "next/link";
 import JsonLd from "@/components/json-ld";
 
@@ -27,8 +27,8 @@ export default function WebDesignService() {
         name: "Diseño y desarrollo web",
         serviceType: "Diseño y desarrollo web",
         description: "Sitios web institucionales, comerciales y landing pages diseñados para comunicar con claridad y funcionar en cualquier dispositivo.",
-        url: new URL("/servicios/diseno-web", process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").toString(),
-        provider: { "@id": `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/#organization` },
+        url: new URL("/servicios/diseno-web", site.url).toString(),
+        provider: { "@id": `${site.url}/#organization` },
       }} />
       <section className="service-detail-hero">
         <div className="container">
