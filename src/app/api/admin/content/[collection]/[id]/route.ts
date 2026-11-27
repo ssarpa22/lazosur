@@ -47,12 +47,22 @@ export async function PATCH(request: Request, context: RouteContext) {
     if (!parsed.success) return NextResponse.json({error: "Contenido inválido."}, {status: 400});
     let body: unknown;
     try { body = await request.json(); } catch { return NextResponse.json({error: "JSON inválido."}, {status: 400}); }
-    const schema = parsed.data.collection === "projects" ? projectSchema : serviceSchema;
-    const parsedBody = schema.safeParse(body);
+    if (parsed.data.collection === "projects") {
+      const parsedBody = projectSchema.safeParse(body);
+      if (!parsedBody.success || Object.keys(parsedBody.data ?? {}).length === 0) {
+        return NextResponse.json({error: parsedBody.success ? "No hay cambios para guardar." : parsedBody.error.issues[0]?.message ?? "Datos inválidos."}, {status: 400});
+      }
+      const {data, error} = await db.from("projects").update(parsedBody.data).eq("id", parsed.data.id).select("*").maybeSingle();
+      if (error?.code === "23505") return NextResponse.json({error: "Ya existe un contenido con ese slug."}, {status: 409});
+      if (error) return NextResponse.json({error: "No se pudo actualizar el contenido."}, {status: 500});
+      if (!data) return NextResponse.json({error: "El contenido no existe."}, {status: 404});
+      return NextResponse.json({data});
+    }
+    const parsedBody = serviceSchema.safeParse(body);
     if (!parsedBody.success || Object.keys(parsedBody.data ?? {}).length === 0) {
       return NextResponse.json({error: parsedBody.success ? "No hay cambios para guardar." : parsedBody.error.issues[0]?.message ?? "Datos inválidos."}, {status: 400});
     }
-    const {data, error} = await db.from(parsed.data.collection).update(parsedBody.data).eq("id", parsed.data.id).select("*").maybeSingle();
+    const {data, error} = await db.from("services").update(parsedBody.data).eq("id", parsed.data.id).select("*").maybeSingle();
     if (error?.code === "23505") return NextResponse.json({error: "Ya existe un contenido con ese slug."}, {status: 409});
     if (error) return NextResponse.json({error: "No se pudo actualizar el contenido."}, {status: 500});
     if (!data) return NextResponse.json({error: "El contenido no existe."}, {status: 404});
