@@ -3,6 +3,7 @@ import {createClient} from "@/lib/supabase/server";
 import {AdminLeads} from "@/components/admin-leads";
 import {AdminContent} from "@/components/admin-content";
 
+
 export const metadata = {
   title: "Panel administrativo",
   robots: {index: false, follow: false},

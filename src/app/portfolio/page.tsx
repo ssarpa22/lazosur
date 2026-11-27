@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { createPageMetadata } from "@/lib/site";
 
+
 export const dynamic = "force-dynamic";
 
 export const metadata = createPageMetadata({

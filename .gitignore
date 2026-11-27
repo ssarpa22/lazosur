@@ -7,3 +7,4 @@ node_modules
 coverage
 
 tsconfig.tsbuildinfo
+.neon

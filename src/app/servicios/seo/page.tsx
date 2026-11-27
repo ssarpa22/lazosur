@@ -2,6 +2,7 @@ import { createPageMetadata, site } from "@/lib/site";
 import Link from "next/link";
 import JsonLd from "@/components/json-ld";
 
+
 export const metadata = createPageMetadata({ title: "Posicionamiento SEO", description: "Estrategia SEO, auditorías, optimización técnica y de contenidos para mejorar la visibilidad orgánica de tu sitio web.", path: "/servicios/seo" });
 
 const capabilities = [
