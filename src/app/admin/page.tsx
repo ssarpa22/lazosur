@@ -10,7 +10,8 @@ export const metadata = {
 export default async function Admin() {
   const user = await requireAdmin();
   const db = await createClient();
-  const [projects, services] = await Promise.all([
+  const [leads, projects, services] = await Promise.all([
+    db.from("leads").select("id", {count: "exact", head: true}),
     db.from("projects").select("id", {count: "exact", head: true}).eq("published", true),
     db.from("services").select("id", {count: "exact", head: true}).eq("published", true),
   ]);
@@ -21,9 +22,9 @@ export default async function Admin() {
       <h1>Panel general</h1>
       <p>Sesión: {user.email}</p>
       <div className="admin-stats">
+        <article><small>Consultas recibidas</small><strong>{leads.count ?? 0}</strong></article>
         <article><small>Proyectos publicados</small><strong>{projects.count ?? 0}</strong></article>
         <article><small>Servicios publicados</small><strong>{services.count ?? 0}</strong></article>
-        <article><small>Gestión comercial</small><strong>Activa</strong></article>
       </div>
       <div className="admin-panel">
         <h2>Consultas comerciales</h2>
