@@ -20,7 +20,8 @@ type Lead = {
   updated_at: string;
 };
 
-type ListResponse = {data: Lead[]; total: number; page: number; pageSize: number};
+type LeadSummary = Pick<Lead, "id" | "name" | "company" | "email" | "status" | "created_at">;
+type ListResponse = {data: LeadSummary[]; total: number; page: number; pageSize: number};
 const statusLabels: Record<LeadStatus, string> = {
   new: "Nueva",
   contacted: "En contacto",
@@ -41,7 +42,7 @@ function formatDate(value: string) {
 }
 
 export function AdminLeads() {
-  const [items, setItems] = useState<Lead[]>([]);
+  const [items, setItems] = useState<LeadSummary[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
@@ -119,7 +120,7 @@ export function AdminLeads() {
       if (!response.ok || !result.data) throw new Error(result.error ?? "No se pudo actualizar el estado.");
       const updatedLead = result.data;
       setSelected(updatedLead);
-      setItems((current) => current.map((lead) => lead.id === updatedLead.id ? updatedLead : lead));
+      setItems((current) => current.map((lead) => lead.id === updatedLead.id ? {...lead, status: updatedLead.status} : lead));
       if (status !== "all" && status !== nextStatus) {
         setItems((current) => current.filter((lead) => lead.id !== updatedLead.id));
         setTotal((current) => Math.max(0, current - 1));
