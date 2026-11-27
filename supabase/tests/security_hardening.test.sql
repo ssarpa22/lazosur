@@ -9,12 +9,12 @@ select ok(
   'RLS is enabled for leads'
 );
 select ok(
-  has_column_privilege('anon', 'public.leads', 'name', 'INSERT'),
-  'anonymous role can insert the contact name'
+  not has_column_privilege('anon', 'public.leads', 'name', 'INSERT'),
+  'anonymous role cannot insert contact data directly'
 );
 select ok(
-  has_column_privilege('anon', 'public.leads', 'consent_at', 'INSERT'),
-  'anonymous role can insert consent timestamp'
+  not has_column_privilege('anon', 'public.leads', 'consent_at', 'INSERT'),
+  'anonymous role cannot insert consent timestamp directly'
 );
 select ok(
   not has_column_privilege('anon', 'public.leads', 'status', 'INSERT'),
