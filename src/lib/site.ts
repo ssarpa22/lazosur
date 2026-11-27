@@ -1,0 +1,2 @@
+export const site={name:"Lazo Sur",description:"Diseño y desarrollo web y posicionamiento SEO para negocios y profesionales.",url:process.env.NEXT_PUBLIC_SITE_URL??"http://localhost:3000"};
+export const nav=[{href:"/servicios",label:"Servicios"},{href:"/portfolio",label:"Proyectos"},{href:"/nosotros",label:"Nosotros"},{href:"/contacto",label:"Contacto"}];
