@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
 import { site, nav } from "@/lib/site";
+import JsonLd from "@/components/json-ld";
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -17,6 +18,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="es-AR">
       <head><meta name="theme-color" content="#101713" /></head>
       <body>
+        <JsonLd data={{
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "@id": `${site.url}/#organization`,
+          name: site.name,
+          url: site.url,
+          description: site.description,
+        }} />
+        <JsonLd data={{
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: site.name,
+          url: site.url,
+          publisher: { "@id": `${site.url}/#organization` },
+          inLanguage: "es-AR",
+        }} />
         <header className="header">
           <div className="container nav">
             <Link className="logo" href="/" aria-label="Lazo Sur, inicio">LAZO <i>SUR</i></Link>
