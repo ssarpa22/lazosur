@@ -18,6 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="es-AR">
       <head><meta name="theme-color" content="#101713" /></head>
       <body>
+        <a className="skip-link" href="#main-content">Saltar al contenido principal</a>
         <JsonLd data={{
           "@context": "https://schema.org",
           "@type": "Organization",
@@ -43,7 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </nav>
           </div>
         </header>
-        <main>{children}</main>
+        <main id="main-content" tabIndex={-1}>{children}</main>
         <footer className="footer">
           <div className="container footer-inner">
             <Link className="logo" href="/" aria-label="Lazo Sur, inicio">LAZO <i>SUR</i></Link>
