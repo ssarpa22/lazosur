@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, type FormEvent } from "react";
 
 type SubmissionState = "idle" | "submitting" | "success" | "error";
@@ -64,13 +65,13 @@ export function ContactForm() {
       <label>Contanos sobre tu proyecto
         <textarea name="message" placeholder="¿Qué necesitás? ¿Qué objetivo te gustaría alcanzar? Cualquier detalle nos ayuda a entender mejor tu idea." required minLength={20} maxLength={4000} rows={5} />
       </label>
-      <label className="contact-consent"><input type="checkbox" name="consent" required /><span>Autorizo el uso de estos datos para que Lazo Sur pueda responder mi consulta.</span></label>
+      <label className="contact-consent"><input type="checkbox" name="consent" required /><span>Leí y acepto la <Link href="/privacidad" target="_blank" rel="noopener noreferrer">política de privacidad</Link> y autorizo el uso de estos datos para responder mi consulta.</span></label>
       <label className="trap" aria-hidden="true">Dejar vacío<input name="website" tabIndex={-1} autoComplete="off" /></label>
       <button className="btn contact-submit" type="submit" disabled={status === "submitting"}>
         {status === "submitting" ? "Enviando consulta…" : "Enviar consulta"} <span aria-hidden="true">↗</span>
       </button>
       <p className={`contact-feedback contact-feedback--${status}`} role="status" aria-live="polite">{message}</p>
-      <small className="contact-privacy">Tus datos se utilizan únicamente para gestionar esta consulta. No compartimos esta información con terceros.</small>
+      <small className="contact-privacy">Tus datos se utilizan únicamente para gestionar esta consulta. No vendemos información personal.</small>
     </form>
   );
 }
