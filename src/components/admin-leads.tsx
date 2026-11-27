@@ -117,10 +117,11 @@ export function AdminLeads() {
       });
       const result = await response.json() as {data?: Lead; error?: string};
       if (!response.ok || !result.data) throw new Error(result.error ?? "No se pudo actualizar el estado.");
-      setSelected(result.data);
-      setItems((current) => current.map((lead) => lead.id === result.data?.id ? result.data! : lead));
+      const updatedLead = result.data;
+      setSelected(updatedLead);
+      setItems((current) => current.map((lead) => lead.id === updatedLead.id ? updatedLead : lead));
       if (status !== "all" && status !== nextStatus) {
-        setItems((current) => current.filter((lead) => lead.id !== result.data?.id));
+        setItems((current) => current.filter((lead) => lead.id !== updatedLead.id));
         setTotal((current) => Math.max(0, current - 1));
       }
     } catch (cause) {
