@@ -1,5 +1,6 @@
 import { createPageMetadata } from "@/lib/site";
 import Link from "next/link";
+import JsonLd from "@/components/json-ld";
 
 export const metadata = createPageMetadata({ title: "Diseño y desarrollo web", description: "Sitios web institucionales, comerciales y landing pages diseñados para comunicar con claridad y funcionar en cualquier dispositivo.", path: "/servicios/diseno-web" });
 
