@@ -12,11 +12,30 @@ const steps = [
   ["04", "Seguimos creciendo", "Medimos, aprendemos y mejoramos lo que construimos."],
 ];
 
+const projects = [
+  {
+    number: "01 / 02",
+    category: "PROYECTO PROPIO · SOFTWARE",
+    name: "MétricaSur",
+    href: "https://metricasur.vercel.app",
+    description: "Una plataforma de gestión pensada para emprendedores y pequeñas empresas. Permite organizar el trabajo en espacios independientes y centralizar clientes y operaciones en un mismo lugar.",
+    focus: "Gestión de negocios · Espacios de trabajo · Organización operativa",
+  },
+  {
+    number: "02 / 02",
+    category: "PROYECTO PROPIO · PLATAFORMA DIGITAL",
+    name: "RadioEterna",
+    href: "https://radioeterna.vercel.app",
+    description: "Un directorio internacional de radios cristianas y evangélicas. Reúne emisoras, sus fichas informativas y enlaces de transmisión para que cada persona pueda descubrirlas y escucharlas en vivo.",
+    focus: "Directorio de emisoras · Reproducción en vivo · Descubrimiento",
+  },
+];
+
 export default function Home() {
   return (
     <>
       <section className="home-hero">
-        <div className="container home-hero-grid">
+        <div className="container home-hero-grid home-hero-grid--single">
           <div className="home-hero-copy">
             <span className="eyebrow"><span className="eyebrow-dot" /> ESTUDIO DIGITAL INDEPENDIENTE · ARGENTINA</span>
             <h1>Ideas claras.<br />Experiencias que<br /><em>mueven negocios.</em></h1>
@@ -26,15 +45,6 @@ export default function Home() {
               <Link className="home-text-link" href="/servicios">Conocé qué hacemos <span aria-hidden="true">→</span></Link>
             </div>
             <div className="home-note"><span className="home-note-line" /> ESTRATEGIA <i>·</i> DISEÑO <i>·</i> DESARROLLO <i>·</i> SEO</div>
-          </div>
-          <div className="hero-visual" aria-label="Composición gráfica abstracta de Lazo Sur">
-            <div className="hero-visual-top"><span>LS / EST. DIGITAL</span><span>01 — 04</span></div>
-            <div className="hero-sun" />
-            <div className="hero-loop loop-one" />
-            <div className="hero-loop loop-two" />
-            <div className="hero-loop loop-three" />
-            <div className="hero-cross">+</div>
-            <div className="hero-visual-bottom"><strong>LO QUE IMAGINÁS,<br />PUEDE TOMAR FORMA.</strong><span>BUENOS AIRES<br />ARGENTINA</span></div>
           </div>
         </div>
         <div className="container hero-bottom"><span>01 / UNA IDEA, MUCHAS POSIBILIDADES</span><span>DESLIZÁ PARA DESCUBRIR <b>↓</b></span></div>
@@ -64,14 +74,20 @@ export default function Home() {
       <section className="home-work section">
         <div className="container">
           <div className="section-heading work-heading"><div><span className="eyebrow">04 — EN NUESTRO UNIVERSO</span><h2>Ideas que también<br /><em>ponemos en práctica.</em></h2></div><p>Además de trabajar con marcas, desarrollamos proyectos propios que nos permiten explorar, aprender y crear.</p></div>
-          <div className="work-grid">
-            <article className="work-card work-metric"><div className="work-art metric-art"><span className="metric-symbol">M<span>↗</span></span><span className="art-caption">DATOS EN MOVIMIENTO / 01</span><div className="metric-bars"><i/><i/><i/><i/><i/><i/><i/></div></div><div className="work-meta"><span>PROYECTO PROPIO · SOFTWARE</span><span>01 / 02</span></div><h3>MétricaSur</h3><p>Software de gestión y analítica empresarial.</p></article>
-            <article className="work-card work-radio"><div className="work-art radio-art"><span className="radio-orbit orbit-a"/><span className="radio-orbit orbit-b"/><strong>R<span>E</span></strong><span className="art-caption">UNA SEÑAL, MUCHAS HISTORIAS / 02</span></div><div className="work-meta"><span>PROYECTO PROPIO · DIGITAL</span><span>02 / 02</span></div><h3>RadioEterna</h3><p>Un proyecto digital propio en desarrollo.</p></article>
+          <div className="work-grid work-grid--editorial">
+            {projects.map((project) => (
+              <article className="work-card work-card--editorial" key={project.name}>
+                <div className="work-meta"><span>{project.category}</span><span>{project.number}</span></div>
+                <h3><a href={project.href} target="_blank" rel="noopener noreferrer">{project.name}<span aria-hidden="true"> ↗</span></a></h3>
+                <p>{project.description}</p>
+                <div className="work-focus">{project.focus}</div>
+              </article>
+            ))}
           </div>
         </div>
       </section>
 
-      <section className="home-cta"><div className="container cta-inner"><span className="eyebrow">¿TENÉS UNA IDEA EN MENTE?</span><h2>Hagamos que<br /><em>pase algo bueno.</em></h2><div className="cta-bottom"><p>Contanos qué estás imaginando.<br />El primer paso es una conversación.</p><Link className="btn cta-button" href="/contacto">Hablemos <span aria-hidden="true">↗</span></Link></div><span className="cta-stamp" aria-hidden="true">LS</span></div></section>
+      <section className="home-cta"><div className="container cta-inner"><span className="eyebrow">¿TENÉS UNA IDEA EN MENTE?</span><h2>Hagamos que<br /><em>pase algo bueno.</em></h2><div className="cta-bottom"><p>Contanos qué estás imaginando.<br />El primer paso es una conversación.</p><Link className="btn cta-button" href="/contacto">Hablemos <span aria-hidden="true">↗</span></Link></div></div></section>
     </>
   );
 }
