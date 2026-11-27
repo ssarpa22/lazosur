@@ -21,6 +21,15 @@ const process = [
 export default function WebDesignService() {
   return (
     <>
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "Service",
+        name: "Diseño y desarrollo web",
+        serviceType: "Diseño y desarrollo web",
+        description: "Sitios web institucionales, comerciales y landing pages diseñados para comunicar con claridad y funcionar en cualquier dispositivo.",
+        url: new URL("/servicios/diseno-web", process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").toString(),
+        provider: { "@id": `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/#organization` },
+      }} />
       <section className="service-detail-hero">
         <div className="container">
           <Link className="service-back-link" href="/servicios">← Todos los servicios</Link>
