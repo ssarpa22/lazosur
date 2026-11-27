@@ -1,4 +1,4 @@
-import { createPageMetadata } from "@/lib/site";
+import { createPageMetadata, site } from "@/lib/site";
 import Link from "next/link";
 import JsonLd from "@/components/json-ld";
 
@@ -27,8 +27,8 @@ export default function SeoService() {
         name: "Posicionamiento SEO",
         serviceType: "Posicionamiento SEO",
         description: "Estrategia SEO, auditorías, optimización técnica y de contenidos para mejorar la visibilidad orgánica de tu sitio web.",
-        url: new URL("/servicios/seo", process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").toString(),
-        provider: { "@id": `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/#organization` },
+        url: new URL("/servicios/seo", site.url).toString(),
+        provider: { "@id": `${site.url}/#organization` },
       }} />
       <section className="service-detail-hero service-detail-hero--seo">
         <div className="container">
