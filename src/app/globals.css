@@ -720,3 +720,26 @@ main:focus {
     transition: none;
   }
 }
+
+
+/* Portfolio: clear next step after the project list */
+.portfolio-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 64px;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+}
+.portfolio-cta p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+@media (max-width: 640px) {
+  .portfolio-cta {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
