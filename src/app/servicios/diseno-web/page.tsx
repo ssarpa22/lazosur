@@ -1,11 +1,7 @@
-import type { Metadata } from "next";
+import { createPageMetadata } from "@/lib/site";
 import Link from "next/link";
 
-export const metadata: Metadata = {
-  title: "Diseño y desarrollo web",
-  description: "Sitios web institucionales, comerciales y landing pages diseñados para comunicar con claridad y funcionar en cualquier dispositivo.",
-  alternates: { canonical: "/servicios/diseno-web" },
-};
+export const metadata = createPageMetadata({ title: "Diseño y desarrollo web", description: "Sitios web institucionales, comerciales y landing pages diseñados para comunicar con claridad y funcionar en cualquier dispositivo.", path: "/servicios/diseno-web" });
 
 const capabilities = [
   ["Sitios institucionales", "Una presencia digital clara para presentar tu negocio, explicar tus servicios y facilitar el contacto."],
