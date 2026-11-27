@@ -1,6 +1,7 @@
 import {NextResponse} from "next/server";
 import {contactSchema} from "@/lib/contact";
-import {createClient} from "@/lib/supabase/server";
+import {checkContactRateLimit} from "@/lib/rate-limit";
+import {createAdminClient} from "@/lib/supabase/admin";
 
 const MAX_BODY_BYTES = 12_000;
 
@@ -46,6 +47,24 @@ async function readJsonBody(request: Request): Promise<
 }
 
 export async function POST(request: Request) {
+  const rateLimit = await checkContactRateLimit(request);
+  if (!rateLimit.allowed) {
+    if ("retryAfterSeconds" in rateLimit) {
+      return NextResponse.json(
+        {error: "Demasiadas solicitudes. Intentá nuevamente más tarde."},
+        {
+          status: 429,
+          headers: {"Retry-After": String(rateLimit.retryAfterSeconds)},
+        },
+      );
+    }
+
+    return NextResponse.json(
+      {error: "El formulario no está disponible temporalmente."},
+      {status: 503},
+    );
+  }
+
   const body = await readJsonBody(request);
   if (!body.ok) {
     return NextResponse.json(
@@ -63,7 +82,7 @@ export async function POST(request: Request) {
 
   let db;
   try {
-    db = await createClient();
+    db = createAdminClient();
   } catch {
     return NextResponse.json({error: "El formulario todavía no está configurado."}, {status: 503});
   }
