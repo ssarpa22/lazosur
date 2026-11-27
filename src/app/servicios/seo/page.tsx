@@ -1,11 +1,7 @@
-import type { Metadata } from "next";
+import { createPageMetadata } from "@/lib/site";
 import Link from "next/link";
 
-export const metadata: Metadata = {
-  title: "Posicionamiento SEO",
-  description: "Estrategia SEO, auditorías, optimización técnica y de contenidos para mejorar la visibilidad orgánica de tu sitio web.",
-  alternates: { canonical: "/servicios/seo" },
-};
+export const metadata = createPageMetadata({ title: "Posicionamiento SEO", description: "Estrategia SEO, auditorías, optimización técnica y de contenidos para mejorar la visibilidad orgánica de tu sitio web.", path: "/servicios/seo" });
 
 const capabilities = [
   ["Auditoría y diagnóstico", "Revisamos el estado del sitio, detectamos oportunidades y ordenamos los problemas según su impacto y prioridad."],
