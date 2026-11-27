@@ -31,7 +31,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="container footer-inner">
             <Link className="logo" href="/" aria-label="Lazo Sur, inicio">LAZO <i>SUR</i></Link>
             <span>Ideas claras. Experiencias digitales que conectan.</span>
-            <small>© {new Date().getFullYear()} Lazo Sur · Argentina</small>
+            <div className="footer-legal">
+              <Link href="/privacidad">Política de privacidad</Link>
+              <small>© {new Date().getFullYear()} Lazo Sur · Argentina</small>
+            </div>
           </div>
         </footer>
       </body>
