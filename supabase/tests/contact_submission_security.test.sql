@@ -4,7 +4,7 @@ create extension if not exists pgtap with schema extensions;
 
 begin;
 
-select plan(3);
+select plan(4);
 
 select ok(
   not has_table_privilege('anon', 'public.leads', 'INSERT'),
@@ -19,6 +19,11 @@ select ok(
 select ok(
   not has_column_privilege('anon', 'public.leads', 'email', 'INSERT'),
   'anonymous visitors have no column-level insert grant'
+);
+
+select ok(
+  not has_column_privilege('authenticated', 'public.leads', 'email', 'INSERT'),
+  'authenticated users have no column-level insert grant'
 );
 
 select * from finish();
