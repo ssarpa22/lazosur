@@ -48,10 +48,17 @@ export async function POST(request: Request, context: {params: Promise<{collecti
     if (!parsedCollection.success) return NextResponse.json({error: "Recurso inválido."}, {status: 404});
     let body: unknown;
     try { body = await request.json(); } catch { return NextResponse.json({error: "JSON inválido."}, {status: 400}); }
-    const schema = parsedCollection.data === "projects" ? projectSchema : serviceSchema;
-    const parsedBody = schema.safeParse(body);
+    if (parsedCollection.data === "projects") {
+      const parsedBody = projectSchema.safeParse(body);
+      if (!parsedBody.success) return NextResponse.json({error: parsedBody.error.issues[0]?.message ?? "Datos inválidos."}, {status: 400});
+      const {data, error} = await db.from("projects").insert(parsedBody.data).select("*").single();
+      if (error?.code === "23505") return NextResponse.json({error: "Ya existe un contenido con ese slug."}, {status: 409});
+      if (error || !data) return NextResponse.json({error: "No se pudo crear el contenido."}, {status: 500});
+      return NextResponse.json({data}, {status: 201});
+    }
+    const parsedBody = serviceSchema.safeParse(body);
     if (!parsedBody.success) return NextResponse.json({error: parsedBody.error.issues[0]?.message ?? "Datos inválidos."}, {status: 400});
-    const {data, error} = await db.from(parsedCollection.data).insert(parsedBody.data).select("*").single();
+    const {data, error} = await db.from("services").insert(parsedBody.data).select("*").single();
     if (error?.code === "23505") return NextResponse.json({error: "Ya existe un contenido con ese slug."}, {status: 409});
     if (error || !data) return NextResponse.json({error: "No se pudo crear el contenido."}, {status: 500});
     return NextResponse.json({data}, {status: 201});
