@@ -1,7 +1,7 @@
 import {NextResponse} from "next/server";
 import {z} from "zod";
 import {getAdminApiUser} from "@/lib/admin-api";
-import {getDb} from "@/lib/db";
+import {getDb, getRows, getTransactionRows} from "@/lib/db";
 
 const paramsSchema = z.object({collection: z.enum(["projects", "services"]), id: z.string().uuid()});
 const slugSchema = z.string().trim().min(2).max(80).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
@@ -36,7 +36,7 @@ export async function GET(_request: Request, context: RouteContext) {
     const rows = parsed.data.collection === "projects"
       ? await db`SELECT * FROM public.projects WHERE id = ${parsed.data.id} LIMIT 1`
       : await db`SELECT * FROM public.services WHERE id = ${parsed.data.id} LIMIT 1`;
-    const data = rows[0];
+    const data = getRows<Record<string, unknown>>(rows)[0];
     if (!data) return NextResponse.json({error: "El contenido no existe."}, {status: 404});
     return NextResponse.json({data});
   } catch {
@@ -105,7 +105,7 @@ export async function PATCH(request: Request, context: RouteContext) {
       ]);
     }
 
-    const data = result[1][0];
+    const data = getTransactionRows<Record<string, unknown>>(result, 1)[0];
     if (!data) return NextResponse.json({error: "El contenido no existe."}, {status: 404});
     return NextResponse.json({data});
   } catch (error) {
