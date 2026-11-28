@@ -1,7 +1,7 @@
 import {NextResponse} from "next/server";
 import {z} from "zod";
 import {getAdminApiUser} from "@/lib/admin-api";
-import {getDb} from "@/lib/db";
+import {getDb, getRows, getTransactionRows} from "@/lib/db";
 
 const collectionSchema = z.enum(["projects", "services"]);
 const slugSchema = z.string().trim().min(2).max(80).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "El slug debe usar minúsculas, números y guiones.");
@@ -102,7 +102,7 @@ export async function POST(request: Request, context: CollectionContext) {
       ]);
     }
 
-    const data = result[1][0];
+    const data = getTransactionRows<Record<string, unknown>>(result, 1)[0];
     if (!data) return NextResponse.json({error: "No se pudo crear el contenido."}, {status: 500});
     return NextResponse.json({data}, {status: 201});
   } catch (error) {
