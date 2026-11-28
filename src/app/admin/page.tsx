@@ -1,5 +1,5 @@
 import {requireAdmin} from "@/lib/auth";
-import {getDb} from "@/lib/db";
+import {getDb, getRows} from "@/lib/db";
 import {AdminLeads} from "@/components/admin-leads";
 import {AdminContent} from "@/components/admin-content";
 
@@ -21,9 +21,9 @@ export default async function Admin() {
       db`SELECT count(*)::int AS count FROM public.projects WHERE published = true`,
       db`SELECT count(*)::int AS count FROM public.services WHERE published = true`,
     ]);
-    leadCount = Number(leads[0]?.count ?? 0);
-    projectCount = Number(projects[0]?.count ?? 0);
-    serviceCount = Number(services[0]?.count ?? 0);
+    leadCount = Number(getRows<{count: number}>(leads)[0]?.count ?? 0);
+    projectCount = Number(getRows<{count: number}>(projects)[0]?.count ?? 0);
+    serviceCount = Number(getRows<{count: number}>(services)[0]?.count ?? 0);
   } catch {
     // Keep the admin shell available if the database is temporarily unavailable.
   }
