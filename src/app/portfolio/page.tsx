@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import { getDb } from "@/lib/db";
 import { createPageMetadata } from "@/lib/site";
 
 
@@ -54,16 +54,14 @@ function safeExternalUrl(value: string | null) {
 
 async function getProjects(): Promise<Project[]> {
   try {
-    const supabase = await createClient();
-    const { data, error } = await supabase
-      .from("projects")
-      .select("id,name,slug,description,category,external_url,sort_order")
-      .eq("published", true)
-      .order("sort_order", { ascending: true })
-      .order("created_at", { ascending: false });
-
-    if (error) throw error;
-    return (data ?? []) as Project[];
+    const db = getDb();
+    const rows = await db`
+      SELECT id, name, slug, description, category, external_url, sort_order
+      FROM public.projects
+      WHERE published = true
+      ORDER BY sort_order ASC, created_at DESC
+    `;
+    return rows as Project[];
   } catch {
     // Keep the public portfolio available during initial setup or a temporary database outage.
     return fallbackProjects;
