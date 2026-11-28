@@ -57,12 +57,11 @@ export function AdminLeads() {
   const [error, setError] = useState("");
 
   const loadLeads = useCallback(async (signal?: AbortSignal) => {
-    setLoading(true);
-    setError("");
     const params = new URLSearchParams({page: String(page), status, q: search});
     try {
       const response = await fetch(`/api/admin/leads?${params}`, {cache: "no-store", signal});
       const result = await response.json() as ListResponse & {error?: string};
+      setError("");
       if (!response.ok) throw new Error(result.error ?? "No se pudieron cargar las consultas.");
       setItems(result.data);
       setTotal(result.total);
@@ -85,12 +84,8 @@ export function AdminLeads() {
   }, [loadLeads]);
 
   useEffect(() => {
-    if (!selectedId) {
-      setSelected(null);
-      return;
-    }
+    if (!selectedId) return;
     const controller = new AbortController();
-    setDetailLoading(true);
     fetch(`/api/admin/leads/${selectedId}`, {cache: "no-store", signal: controller.signal})
       .then(async (response) => {
         const result = await response.json() as {data?: Lead; error?: string};
@@ -178,7 +173,7 @@ export function AdminLeads() {
         </div>
 
         <div className="lead-detail-panel">
-          {!selectedId ? <p className="leads-empty">Seleccioná una consulta para ver todos sus datos.</p> : detailLoading || !selected ? <p className="leads-empty">Cargando detalle…</p> : (
+          {!selectedId ? <p className="leads-empty">Seleccioná una consulta para ver todos sus datos.</p> : detailLoading || !selected || selected.id !== selectedId ? <p className="leads-empty">Cargando detalle…</p> : (
             <>
               <div className="lead-detail-heading"><div><span className="eyebrow">DETALLE DE CONSULTA</span><h2>{selected.name}</h2></div><span className="lead-status">{statusLabels[selected.status]}</span></div>
               <dl className="lead-detail-grid">
