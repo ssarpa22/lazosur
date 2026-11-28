@@ -1,6 +1,7 @@
 import {NextResponse} from "next/server";
 import {z} from "zod";
-import {getAdminApiClient} from "@/lib/admin-api";
+import {getAdminApiUser} from "@/lib/admin-api";
+import {getDb} from "@/lib/db";
 
 const collectionSchema = z.enum(["projects", "services"]);
 const slugSchema = z.string().trim().min(2).max(80).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "El slug debe usar minúsculas, números y guiones.");
@@ -26,43 +27,87 @@ const serviceSchema = z.object({
   sort_order: z.number().int().min(0).max(10000).default(0),
 }).strict();
 
-export async function GET(_request: Request, context: {params: Promise<{collection: string}>}) {
+type CollectionContext = {params: Promise<{collection: string}>};
+
+export async function GET(_request: Request, context: CollectionContext) {
   try {
-    const db = await getAdminApiClient();
-    if (!db) return NextResponse.json({error: "No autorizado."}, {status: 401});
+    const user = await getAdminApiUser();
+    if (!user) return NextResponse.json({error: "No autorizado."}, {status: 401});
     const parsed = collectionSchema.safeParse((await context.params).collection);
     if (!parsed.success) return NextResponse.json({error: "Recurso inválido."}, {status: 404});
-    const {data, error} = await db.from(parsed.data).select("*").order("sort_order", {ascending: true}).order("created_at", {ascending: false}).limit(200);
-    if (error) return NextResponse.json({error: "No se pudo cargar el contenido."}, {status: 500});
-    return NextResponse.json({data: data ?? []});
+
+    const db = getDb();
+    const data = parsed.data === "projects"
+      ? await db`
+          SELECT * FROM public.projects
+          ORDER BY sort_order ASC, created_at DESC
+          LIMIT 200
+        `
+      : await db`
+          SELECT * FROM public.services
+          ORDER BY sort_order ASC, created_at DESC
+          LIMIT 200
+        `;
+    return NextResponse.json({data});
   } catch {
     return NextResponse.json({error: "No se pudo completar la solicitud."}, {status: 500});
   }
 }
 
-export async function POST(request: Request, context: {params: Promise<{collection: string}>}) {
+export async function POST(request: Request, context: CollectionContext) {
   try {
-    const db = await getAdminApiClient();
-    if (!db) return NextResponse.json({error: "No autorizado."}, {status: 401});
+    const user = await getAdminApiUser();
+    if (!user) return NextResponse.json({error: "No autorizado."}, {status: 401});
     const parsedCollection = collectionSchema.safeParse((await context.params).collection);
     if (!parsedCollection.success) return NextResponse.json({error: "Recurso inválido."}, {status: 404});
+
     let body: unknown;
-    try { body = await request.json(); } catch { return NextResponse.json({error: "JSON inválido."}, {status: 400}); }
+    try { body = await request.json(); } catch {
+      return NextResponse.json({error: "JSON inválido."}, {status: 400});
+    }
+
+    const db = getDb();
+    let result;
     if (parsedCollection.data === "projects") {
       const parsedBody = projectSchema.safeParse(body);
       if (!parsedBody.success) return NextResponse.json({error: parsedBody.error.issues[0]?.message ?? "Datos inválidos."}, {status: 400});
-      const {data, error} = await db.from("projects").insert(parsedBody.data).select("*").single();
-      if (error?.code === "23505") return NextResponse.json({error: "Ya existe un contenido con ese slug."}, {status: 409});
-      if (error || !data) return NextResponse.json({error: "No se pudo crear el contenido."}, {status: 500});
-      return NextResponse.json({data}, {status: 201});
+      const p = parsedBody.data;
+      result = await db.transaction([
+        db`SELECT set_config('app.actor_email', ${user.email}, true)`,
+        db`
+          INSERT INTO public.projects
+            (name, slug, description, category, image_url, gallery, external_url, published, sort_order)
+          VALUES
+            (${p.name}, ${p.slug}, ${p.description}, ${p.category},
+             ${p.image_url || null}, ${p.gallery}, ${p.external_url || null},
+             ${p.published}, ${p.sort_order})
+          RETURNING *
+        `,
+      ]);
+    } else {
+      const parsedBody = serviceSchema.safeParse(body);
+      if (!parsedBody.success) return NextResponse.json({error: parsedBody.error.issues[0]?.message ?? "Datos inválidos."}, {status: 400});
+      const p = parsedBody.data;
+      result = await db.transaction([
+        db`SELECT set_config('app.actor_email', ${user.email}, true)`,
+        db`
+          INSERT INTO public.services
+            (name, slug, description, content, meta_title, meta_description, published, sort_order)
+          VALUES
+            (${p.name}, ${p.slug}, ${p.description}, ${p.content ?? null},
+             ${p.meta_title ?? null}, ${p.meta_description ?? null},
+             ${p.published}, ${p.sort_order})
+          RETURNING *
+        `,
+      ]);
     }
-    const parsedBody = serviceSchema.safeParse(body);
-    if (!parsedBody.success) return NextResponse.json({error: parsedBody.error.issues[0]?.message ?? "Datos inválidos."}, {status: 400});
-    const {data, error} = await db.from("services").insert(parsedBody.data).select("*").single();
-    if (error?.code === "23505") return NextResponse.json({error: "Ya existe un contenido con ese slug."}, {status: 409});
-    if (error || !data) return NextResponse.json({error: "No se pudo crear el contenido."}, {status: 500});
+
+    const data = result[1][0];
+    if (!data) return NextResponse.json({error: "No se pudo crear el contenido."}, {status: 500});
     return NextResponse.json({data}, {status: 201});
-  } catch {
+  } catch (error) {
+    const code = typeof error === "object" && error !== null && "code" in error ? String(error.code) : "";
+    if (code === "23505") return NextResponse.json({error: "Ya existe un contenido con ese slug."}, {status: 409});
     return NextResponse.json({error: "No se pudo completar la solicitud."}, {status: 500});
   }
 }
