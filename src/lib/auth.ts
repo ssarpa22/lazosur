@@ -1,17 +1,8 @@
 ﻿import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/server";
+import { isAdmin } from "@/lib/auth-utils";
 
-export function isAdmin(email?: string | null) {
-  const allowedEmails = (process.env.ADMIN_EMAILS ?? "")
-    .split(",")
-    .map((value) => value.trim().toLowerCase())
-    .filter(Boolean);
-
-  return Boolean(
-    email &&
-    allowedEmails.includes(email.trim().toLowerCase()),
-  );
-}
+export { isAdmin } from "@/lib/auth-utils";
 
 export async function requireAdmin() {
   const result = await auth.getSession().catch(() => null);
