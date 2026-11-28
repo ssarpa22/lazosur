@@ -1,6 +1,6 @@
 "use client";
 
-import {useCallback, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 
 type LeadStatus = "new" | "contacted" | "negotiation" | "won" | "lost" | "archived";
 type Lead = {
@@ -56,32 +56,30 @@ export function AdminLeads() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  const loadLeads = useCallback(async (signal?: AbortSignal) => {
-    const params = new URLSearchParams({page: String(page), status, q: search});
-    try {
-      const response = await fetch(`/api/admin/leads?${params}`, {cache: "no-store", signal});
-      const result = await response.json() as ListResponse & {error?: string};
-      setError("");
-      if (!response.ok) throw new Error(result.error ?? "No se pudieron cargar las consultas.");
-      setItems(result.data);
-      setTotal(result.total);
-      setPageSize(result.pageSize);
-      if (selectedId && !result.data.some((lead) => lead.id === selectedId) && page === 1) {
-        setSelectedId(null);
-        setSelected(null);
-      }
-    } catch (cause) {
-      if (cause instanceof Error && cause.name !== "AbortError") setError(cause.message);
-    } finally {
-      if (!signal?.aborted) setLoading(false);
-    }
-  }, [page, status, search, selectedId]);
-
   useEffect(() => {
     const controller = new AbortController();
-    void loadLeads(controller.signal);
-    return () => controller.abort();
-  }, [loadLeads]);
+    const params = new URLSearchParams({page: String(page), status, q: search});
+    fetch(`/api/admin/leads?${params}`, {cache:"no-store",signal:controller.signal})
+      .then(async response=>{
+        const result = await response.json() as ListResponse & {error?:string};
+        if(!response.ok) throw new Error(result.error ?? "No se pudieron cargar las consultas.");
+        setItems(result.data);
+        setTotal(result.total);
+        setPageSize(result.pageSize);
+        setError("");
+        if(selectedId && !result.data.some(lead=>lead.id===selectedId) && page===1) {
+          setSelectedId(null);
+          setSelected(null);
+        }
+      })
+      .catch(cause=>{
+        if(cause instanceof Error && cause.name!=="AbortError") setError(cause.message);
+      })
+      .finally(()=>{
+        if(!controller.signal.aborted) setLoading(false);
+      });
+    return ()=>controller.abort();
+  },[page,status,search,selectedId]);
 
   useEffect(() => {
     if (!selectedId) return;
