@@ -1,6 +1,6 @@
 import {NextResponse} from "next/server";
 import {getAdminApiUser} from "@/lib/admin-api";
-import {getDb} from "@/lib/db";
+import {getDb, getRows} from "@/lib/db";
 
 const statuses = ["new", "contacted", "negotiation", "won", "lost", "archived"] as const;
 
@@ -57,7 +57,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({
       data,
-      total: Number(countRows[0]?.total ?? 0),
+      total: Number(getRows<{total: number}>(countRows)[0]?.total ?? 0),
       page,
       pageSize,
     });
