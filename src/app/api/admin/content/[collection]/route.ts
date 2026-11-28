@@ -1,7 +1,7 @@
 import {NextResponse} from "next/server";
 import {z} from "zod";
 import {getAdminApiUser} from "@/lib/admin-api";
-import {getDb, getRows, getTransactionRows} from "@/lib/db";
+import {getDb, getTransactionRows} from "@/lib/db";
 
 const collectionSchema = z.enum(["projects", "services"]);
 const slugSchema = z.string().trim().min(2).max(80).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "El slug debe usar minúsculas, números y guiones.");
