@@ -1,13 +1,12 @@
-import {createClient} from "@/lib/supabase/server";
-import {isAdmin} from "@/lib/auth";
+import "server-only";
 
-export async function getAdminApiClient() {
-  const db = await createClient();
-  const {data, error} = await db.auth.getUser();
+import { auth } from "@/lib/auth/server";
+import { isAdmin } from "@/lib/auth";
 
-  if (error || !data.user || !isAdmin(data.user.email, data.user.app_metadata)) {
-    return null;
-  }
+export async function getAdminApiUser() {
+  const session = await auth.getSession().catch(() => null);
+  const user = session?.data?.user;
 
-  return db;
+  if (!user || !isAdmin(user.email)) return null;
+  return { email: user.email!.trim().toLowerCase() };
 }
