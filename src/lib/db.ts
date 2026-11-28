@@ -16,3 +16,22 @@ export function getDb(): NeonClient {
   client ??= neon(connectionString);
   return client;
 }
+
+/** Normalize the default Neon HTTP result shape without depending on its overload union. */
+export function getRows<T extends Record<string, unknown>>(result: unknown): T[] {
+  if (Array.isArray(result)) return result as T[];
+  if (typeof result === "object" && result !== null && "rows" in result) {
+    const rows = (result as {rows?: unknown}).rows;
+    if (Array.isArray(rows)) return rows as T[];
+  }
+  return [];
+}
+
+/** Read one statement's rows from the array returned by neon().transaction(). */
+export function getTransactionRows<T extends Record<string, unknown>>(
+  result: unknown,
+  statementIndex: number,
+): T[] {
+  if (!Array.isArray(result)) return [];
+  return getRows<T>(result[statementIndex]);
+}
