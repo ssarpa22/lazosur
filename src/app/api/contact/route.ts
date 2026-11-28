@@ -1,7 +1,7 @@
 import {NextResponse} from "next/server";
 import {contactSchema} from "@/lib/contact";
 import {checkContactRateLimit} from "@/lib/rate-limit";
-import {createAdminClient} from "@/lib/supabase/admin";
+import {getDb} from "@/lib/db";
 
 const MAX_BODY_BYTES = 12_000;
 
@@ -80,26 +80,27 @@ export async function POST(request: Request) {
 
   if (parsed.data.website) return NextResponse.json({ok: true});
 
-  let db;
   try {
-    db = createAdminClient();
-  } catch {
-    return NextResponse.json({error: "El formulario todavía no está configurado."}, {status: 503});
-  }
-
-  const {error} = await db.from("leads").insert({
-    name: parsed.data.name,
-    company: parsed.data.company || null,
-    email: parsed.data.email,
-    phone: parsed.data.phone || null,
-    service: parsed.data.service,
-    budget: parsed.data.budget || null,
-    message: parsed.data.message,
-    consent_at: new Date().toISOString(),
-  });
-
-  if (error) {
-    console.error("contact_insert_failed", {code: error.code});
+    const db = getDb();
+    await db`
+      INSERT INTO public.leads (
+        name, company, email, phone, service, budget, message, consent_at
+      ) VALUES (
+        ${parsed.data.name},
+        ${parsed.data.company || null},
+        ${parsed.data.email},
+        ${parsed.data.phone || null},
+        ${parsed.data.service},
+        ${parsed.data.budget || null},
+        ${parsed.data.message},
+        ${new Date().toISOString()}
+      )
+    `;
+  } catch (error) {
+    const code = typeof error === "object" && error !== null && "code" in error
+      ? String(error.code)
+      : "unknown";
+    console.error("contact_insert_failed", {code});
     return NextResponse.json(
       {error: "No pudimos guardar tu consulta. Intentá más tarde."},
       {status: 500},
