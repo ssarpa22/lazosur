@@ -1,12 +1,13 @@
 import {NextResponse} from "next/server";
-import {getAdminApiClient} from "@/lib/admin-api";
+import {getAdminApiUser} from "@/lib/admin-api";
+import {getDb} from "@/lib/db";
 
 const statuses = ["new", "contacted", "negotiation", "won", "lost", "archived"] as const;
 
 export async function GET(request: Request) {
   try {
-    const db = await getAdminApiClient();
-    if (!db) return NextResponse.json({error: "No autorizado."}, {status: 401});
+    const user = await getAdminApiUser();
+    if (!user) return NextResponse.json({error: "No autorizado."}, {status: 401});
 
     const params = new URL(request.url).searchParams;
     const rawPage = Number(params.get("page") ?? "1");
@@ -16,31 +17,50 @@ export async function GET(request: Request) {
       return NextResponse.json({error: "Filtro de estado inválido."}, {status: 400});
     }
 
-    // Keep PostgREST filter syntax out of user-controlled search terms.
     const search = (params.get("q") ?? "")
       .replace(/[^\p{L}\p{N}\s@.+_-]/gu, " ")
       .trim()
       .slice(0, 80);
-
+    const statusFilter = rawStatus === "all" ? null : rawStatus;
+    const term = search || null;
+    const pattern = term ? `%${term}%` : null;
     const pageSize = 20;
-    let query = db
-      .from("leads")
-      .select("id,name,company,email,status,created_at", {count: "exact"})
-      .order("created_at", {ascending: false})
-      .range((page - 1) * pageSize, page * pageSize - 1);
+    const offset = (page - 1) * pageSize;
+    const db = getDb();
 
-    if (rawStatus !== "all") query = query.eq("status", rawStatus);
-    if (search) {
-      const term = search.replace(/[.*]/g, " ").trim();
-      if (term) query = query.or(`name.ilike.%${term}%,email.ilike.%${term}%,company.ilike.%${term}%`);
-    }
+    const [data, countRows] = await Promise.all([
+      db`
+        SELECT id, name, company, email, status, created_at
+        FROM public.leads
+        WHERE (${statusFilter}::text IS NULL OR status = ${statusFilter})
+          AND (
+            ${pattern}::text IS NULL
+            OR name ILIKE ${pattern}
+            OR email ILIKE ${pattern}
+            OR company ILIKE ${pattern}
+          )
+        ORDER BY created_at DESC
+        LIMIT ${pageSize} OFFSET ${offset}
+      `,
+      db`
+        SELECT count(*)::int AS total
+        FROM public.leads
+        WHERE (${statusFilter}::text IS NULL OR status = ${statusFilter})
+          AND (
+            ${pattern}::text IS NULL
+            OR name ILIKE ${pattern}
+            OR email ILIKE ${pattern}
+            OR company ILIKE ${pattern}
+          )
+      `,
+    ]);
 
-    const {data, error, count} = await query;
-    if (error) {
-      return NextResponse.json({error: "No se pudieron cargar las consultas."}, {status: 500});
-    }
-
-    return NextResponse.json({data: data ?? [], total: count ?? 0, page, pageSize});
+    return NextResponse.json({
+      data,
+      total: Number(countRows[0]?.total ?? 0),
+      page,
+      pageSize,
+    });
   } catch {
     return NextResponse.json({error: "No se pudo completar la solicitud."}, {status: 500});
   }
