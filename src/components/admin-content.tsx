@@ -30,17 +30,34 @@ export function AdminContent() {
   const [notice,setNotice] = useState("");
 
   const load = useCallback(async () => {
+    setLoading(true);
+    setError("");
     try {
       const response = await fetch(`/api/admin/content/${collection}`,{cache:"no-store"});
       const result = await response.json() as {data?:ContentItem[];error?:string};
-      setError("");
       if(!response.ok || !result.data) throw new Error(result.error ?? "No se pudo cargar el contenido.");
       setItems(result.data);
     } catch(cause) { setError(cause instanceof Error ? cause.message : "Error al cargar."); }
     finally { setLoading(false); }
   },[collection]);
 
-  useEffect(()=>{void load();},[load]);
+  useEffect(()=>{
+    const controller = new AbortController();
+    fetch(`/api/admin/content/${collection}`,{cache:"no-store",signal:controller.signal})
+      .then(async response=>{
+        const result = await response.json() as {data?:ContentItem[];error?:string};
+        if(!response.ok || !result.data) throw new Error(result.error ?? "No se pudo cargar el contenido.");
+        setItems(result.data);
+        setError("");
+      })
+      .catch(cause=>{
+        if(cause instanceof Error && cause.name!=="AbortError") setError(cause.message);
+      })
+      .finally(()=>{
+        if(!controller.signal.aborted) setLoading(false);
+      });
+    return ()=>controller.abort();
+  },[collection]);
 
   function change(key:string,value:string|boolean) { setValues(current=>({...current,[key]:value})); }
   function edit(item:ContentItem) { setEditing(item.id);setValues(toValues(item,collection));setNotice(""); }
