@@ -1,7 +1,7 @@
 import {NextResponse} from "next/server";
 import {z} from "zod";
 import {getAdminApiUser} from "@/lib/admin-api";
-import {getDb} from "@/lib/db";
+import {getDb, getRows, getTransactionRows} from "@/lib/db";
 
 const paramsSchema = z.object({id: z.string().uuid()});
 const statusSchema = z.object({
@@ -26,7 +26,7 @@ export async function GET(_request: Request, context: RouteContext) {
       WHERE id = ${parsedParams.data.id}
       LIMIT 1
     `;
-    const data = rows[0];
+    const data = getRows<Record<string, unknown>>(rows)[0];
     if (!data) return NextResponse.json({error: "La consulta no existe."}, {status: 404});
     return NextResponse.json({data});
   } catch {
@@ -65,7 +65,7 @@ export async function PATCH(request: Request, context: RouteContext) {
           status, source, consent_at, internal_notes, created_at, updated_at
       `,
     ]);
-    const data = result[1][0];
+    const data = getTransactionRows<Record<string, unknown>>(result, 1)[0];
     if (!data) return NextResponse.json({error: "La consulta no existe."}, {status: 404});
     return NextResponse.json({data});
   } catch (error) {
