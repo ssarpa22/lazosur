@@ -1,8 +1,7 @@
 import {requireAdmin} from "@/lib/auth";
-import {createClient} from "@/lib/supabase/server";
+import {getDb} from "@/lib/db";
 import {AdminLeads} from "@/components/admin-leads";
 import {AdminContent} from "@/components/admin-content";
-
 
 export const metadata = {
   title: "Panel administrativo",
@@ -11,12 +10,23 @@ export const metadata = {
 
 export default async function Admin() {
   const user = await requireAdmin();
-  const db = await createClient();
-  const [leads, projects, services] = await Promise.all([
-    db.from("leads").select("id", {count: "exact", head: true}),
-    db.from("projects").select("id", {count: "exact", head: true}).eq("published", true),
-    db.from("services").select("id", {count: "exact", head: true}).eq("published", true),
-  ]);
+  let leadCount = 0;
+  let projectCount = 0;
+  let serviceCount = 0;
+
+  try {
+    const db = getDb();
+    const [leads, projects, services] = await Promise.all([
+      db`SELECT count(*)::int AS count FROM public.leads`,
+      db`SELECT count(*)::int AS count FROM public.projects WHERE published = true`,
+      db`SELECT count(*)::int AS count FROM public.services WHERE published = true`,
+    ]);
+    leadCount = Number(leads[0]?.count ?? 0);
+    projectCount = Number(projects[0]?.count ?? 0);
+    serviceCount = Number(services[0]?.count ?? 0);
+  } catch {
+    // Keep the admin shell available if the database is temporarily unavailable.
+  }
 
   return (
     <section className="admin container">
@@ -24,9 +34,9 @@ export default async function Admin() {
       <h1>Panel general</h1>
       <p>Sesión: {user.email}</p>
       <div className="admin-stats">
-        <article><small>Consultas recibidas</small><strong>{leads.count ?? 0}</strong></article>
-        <article><small>Proyectos publicados</small><strong>{projects.count ?? 0}</strong></article>
-        <article><small>Servicios publicados</small><strong>{services.count ?? 0}</strong></article>
+        <article><small>Consultas recibidas</small><strong>{leadCount}</strong></article>
+        <article><small>Proyectos publicados</small><strong>{projectCount}</strong></article>
+        <article><small>Servicios publicados</small><strong>{serviceCount}</strong></article>
       </div>
       <div className="admin-panel">
         <h2>Consultas comerciales</h2>
