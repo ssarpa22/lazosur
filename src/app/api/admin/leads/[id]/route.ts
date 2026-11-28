@@ -10,9 +10,6 @@ const statusSchema = z.object({
 
 type RouteContext = {params: Promise<{id: string}>};
 
-const leadColumns = `id, name, company, email, phone, service, budget, message,
-  status, source, consent_at, internal_notes, created_at, updated_at`;
-
 export async function GET(_request: Request, context: RouteContext) {
   try {
     const user = await getAdminApiUser();
@@ -23,7 +20,8 @@ export async function GET(_request: Request, context: RouteContext) {
 
     const db = getDb();
     const rows = await db`
-      SELECT ${db.unsafe(leadColumns)}
+      SELECT id, name, company, email, phone, service, budget, message,
+        status, source, consent_at, internal_notes, created_at, updated_at
       FROM public.leads
       WHERE id = ${parsedParams.data.id}
       LIMIT 1
