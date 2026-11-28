@@ -2,6 +2,7 @@ import { createPageMetadata } from "@/lib/site";
 import Link from "next/link";
 import { ContactForm } from "@/components/contact-form";
 
+
 export const metadata = createPageMetadata({ title: "Contacto", description: "Contanos sobre tu proyecto web o tu estrategia SEO. En Lazo Sur podemos ayudarte a definir el próximo paso.", path: "/contacto" });
 
 export default function Contact() {

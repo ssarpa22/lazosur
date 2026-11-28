@@ -1,6 +1,7 @@
 import { createPageMetadata } from "@/lib/site";
 import Link from "next/link";
 
+
 export const metadata = createPageMetadata({ title: "Servicios", description: "Diseño y desarrollo web y posicionamiento SEO para negocios y profesionales.", path: "/servicios" });
 
 const services = [

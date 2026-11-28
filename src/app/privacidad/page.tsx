@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createPageMetadata } from "@/lib/site";
 
+
 export const metadata = createPageMetadata({
   title: "Política de privacidad",
   description: "Conocé qué datos recopila Lazo Sur cuando enviás una consulta, para qué se utilizan y cómo ejercer tus derechos.",

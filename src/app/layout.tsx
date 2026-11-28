@@ -4,6 +4,7 @@ import "./globals.css";
 import { site, nav } from "@/lib/site";
 import JsonLd from "@/components/json-ld";
 
+
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: { default: "Lazo Sur — Diseño web y SEO", template: "%s | Lazo Sur" },

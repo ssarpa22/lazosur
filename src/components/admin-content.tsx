@@ -30,7 +30,8 @@ export function AdminContent() {
   const [notice,setNotice] = useState("");
 
   const load = useCallback(async () => {
-    setLoading(true); setError("");
+    setLoading(true);
+    setError("");
     try {
       const response = await fetch(`/api/admin/content/${collection}`,{cache:"no-store"});
       const result = await response.json() as {data?:ContentItem[];error?:string};
@@ -40,7 +41,23 @@ export function AdminContent() {
     finally { setLoading(false); }
   },[collection]);
 
-  useEffect(()=>{void load();setEditing(null);setValues(emptyValues(collection));setNotice("");},[load,collection]);
+  useEffect(()=>{
+    const controller = new AbortController();
+    fetch(`/api/admin/content/${collection}`,{cache:"no-store",signal:controller.signal})
+      .then(async response=>{
+        const result = await response.json() as {data?:ContentItem[];error?:string};
+        if(!response.ok || !result.data) throw new Error(result.error ?? "No se pudo cargar el contenido.");
+        setItems(result.data);
+        setError("");
+      })
+      .catch(cause=>{
+        if(cause instanceof Error && cause.name!=="AbortError") setError(cause.message);
+      })
+      .finally(()=>{
+        if(!controller.signal.aborted) setLoading(false);
+      });
+    return ()=>controller.abort();
+  },[collection]);
 
   function change(key:string,value:string|boolean) { setValues(current=>({...current,[key]:value})); }
   function edit(item:ContentItem) { setEditing(item.id);setValues(toValues(item,collection));setNotice(""); }
@@ -85,8 +102,8 @@ export function AdminContent() {
 
   return <section className="content-manager" aria-label="Gestión de proyectos y servicios">
     <div className="content-tabs" role="tablist" aria-label="Tipo de contenido">
-      <button type="button" role="tab" aria-selected={collection==="projects"} className={collection==="projects"?"active":""} onClick={()=>setCollection("projects")}>Proyectos</button>
-      <button type="button" role="tab" aria-selected={collection==="services"} className={collection==="services"?"active":""} onClick={()=>setCollection("services")}>Servicios</button>
+      <button type="button" role="tab" aria-selected={collection==="projects"} className={collection==="projects"?"active":""} onClick={()=>{setCollection("projects");setEditing(null);setValues(emptyValues("projects"));setNotice("");setError("");}}>Proyectos</button>
+      <button type="button" role="tab" aria-selected={collection==="services"} className={collection==="services"?"active":""} onClick={()=>{setCollection("services");setEditing(null);setValues(emptyValues("services"));setNotice("");setError("");}}>Servicios</button>
     </div>
     <div className="content-layout">
       <div className="content-list-panel">
